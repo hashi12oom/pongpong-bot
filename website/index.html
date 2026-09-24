@@ -87,10 +87,18 @@ const footballers=[
 "Ederson","Emerson Royal","Bruno Fernandes","Bernardo Silva","Victor Osimhen","Khvicha Kvaratskhelia","Cole Palmer","Jamal Musiala","Florian Wirtz"
 ];
 const photoCache=JSON.parse(localStorage.ppFootballPhotos||"{}");
-const photoFallback="https://upload.wikimedia.org/wikipedia/commons/8/8e/Football_iu_1996.jpg";const fixedPhotos={'Emerson Royal':'https://commons.wikimedia.org/wiki/Special:FilePath/Emerson%20Royal%20in%202018%20for%20Atletico%20Mineiro%20(cropped).jpg'};
+const photoFallback="https://upload.wikimedia.org/wikipedia/commons/8/8e/Football_iu_1996.jpg";const fixedPhotos={'Ederson':'https://en.wikipedia.org/api/rest_v1/page/summary/Ederson_(footballer,_born_1993)','Emerson Royal':'https://commons.wikimedia.org/wiki/Special:FilePath/Emerson%20Royal%20in%202018%20for%20Atletico%20Mineiro%20(cropped).jpg'};
 let mem=[],first=null,lock=false,moves=0,mSize=2,photoLoading=0;
 async function footballPhoto(name){
- if(fixedPhotos[name]){photoCache[name]=fixedPhotos[name];return fixedPhotos[name]}if(photoCache[name]&&photoCache[name]!==photoFallback&&!photoCache[name].includes('PAC-MAN_logo'))return photoCache[name];
+ if(fixedPhotos[name]){
+  if(name==='Ederson'){
+   try{
+    const r=await fetch(fixedPhotos[name]);const j=await r.json();const u=j.thumbnail?.source||j.originalimage?.source;
+    if(u){photoCache[name]=u;localStorage.ppFootballPhotos=JSON.stringify(photoCache);return u}
+   }catch{}
+  }else{photoCache[name]=fixedPhotos[name];localStorage.ppFootballPhotos=JSON.stringify(photoCache);return fixedPhotos[name]}
+ }
+ if(photoCache[name]&&photoCache[name]!==photoFallback&&!photoCache[name].includes('PAC-MAN_logo'))return photoCache[name];
  try{
   const r=await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(name.replaceAll(" ","_")));
   const j=await r.json();
