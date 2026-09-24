@@ -26,6 +26,11 @@
 <div id="breakout" class="screen"><div class="head"><div><h2>Breakout</h2><p>Move the paddle. Hold the left/right buttons or keys.</p></div><div class="gameStats"><span class="gameStat"><b id="breakoutBest">0</b><span class="muted">Best score</span></span></div></div><canvas id="breakc" class="canvas" width="520" height="420"></canvas><div id="bscore" class="msg">Score: 0</div><div class="controls"><button data-b="left">←</button><button data-b="right">→</button><button id="bboost" class="boost">Boost</button><button id="brestart">Restart</button></div></div>
 </section><div class="footer">PongPong Games</div>
 </main></div></div>
+<div id="cheatPanel" class="cheatPanel">
+<div class="cheatTop" id="cheatDragBar"><div class="cheatDragTitle"><span>Cheat Mode</span><small>DRAG</small></div><img id="cheatMiniAvatar" class="cheatMiniAvatar" src="https://pongpong-bot.onrender.com/api/avatar/1552517009441558568" alt="PongPong"><div class="cheatActions"><button type="button" class="cheatClose" id="cheatMin" aria-label="Minimize">−</button><button type="button" class="cheatClose" id="cheatClose" aria-label="Close">×</button></div></div>
+<div class="cheatTabs" id="cheatTabs"></div>
+<div class="cheatBody" id="cheatBody"></div>
+</div>
 <script>
 const games=[['wordle','Wordle'],['rush','Reaction'],['number','Number'],['ttt','Tic-Tac-Toe'],['memory','Memory'],['tetris','Tetris'],['breakout','Breakout']];
 let current='wordle';const $=id=>document.getElementById(id);
@@ -175,10 +180,6 @@ if(cheatUnlocked)renderCheat();
 
 startWordle();resetRush();startNumber();startMemory();startTetris();startBreakout();
 </script>
-<div id="cheatPanel" class="cheatPanel">
-<div class="cheatTop" id="cheatDragBar"><div class="cheatDragTitle"><span>Cheat Mode</span><small>DRAG</small></div><img id="cheatMiniAvatar" class="cheatMiniAvatar" src="https://pongpong-bot.onrender.com/api/avatar/1552517009441558568" alt="PongPong"><div class="cheatActions"><button type="button" class="cheatClose" id="cheatMin" aria-label="Minimize">−</button><button type="button" class="cheatClose" id="cheatClose" aria-label="Close">×</button></div></div>
-<div class="cheatTabs" id="cheatTabs"></div>
-<div class="cheatBody" id="cheatBody"></div>
-</div>
+
 </body>
 </html>
