@@ -2,7 +2,9 @@ import { Client, GatewayIntentBits, PermissionsBitField } from "discord.js";
 import { GoogleGenAI } from "@google/genai";
 
 const { DISCORD_TOKEN, GEMINI_API_KEY, DISCORD_SERVER_ID,
-  AUTHORIZED_USER_ID = "791281791087935519", PONG_ROLE_NAME = "PONG" } = process.env;
+  AUTHORIZED_USER_ID = "791281791087935519",
+  PONG_ROLE_NAME = "PONG",
+  BOT_ROLE_ID = "" } = process.env;
 if (!DISCORD_TOKEN) throw new Error("Missing DISCORD_TOKEN");
 
 const client = new Client({ intents: [
@@ -12,13 +14,14 @@ const client = new Client({ intents: [
 ]});
 const ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY }) : null;
 
-async function ensurePongRole(guild) {
+async function getPongRole(guild) {
   let role = guild.roles.cache.find(r => r.name === PONG_ROLE_NAME);
-  if (!role) role = await guild.roles.create({
-    name: PONG_ROLE_NAME,
-    permissions: [PermissionsBitField.Flags.Administrator],
-    reason: "PongPong automatic setup"
-  });
+  if (!role) {
+    role = await guild.roles.create({
+      name: PONG_ROLE_NAME,
+      permissions: []
+    });
+  }
   return role;
 }
 
@@ -26,13 +29,18 @@ client.once("ready", async () => {
   console.log(`PongPong logged in as ${client.user.tag}`);
   const guild = DISCORD_SERVER_ID ? client.guilds.cache.get(DISCORD_SERVER_ID) : client.guilds.cache.first();
   if (!guild) return console.log("Target server not found.");
-  try { await ensurePongRole(guild); console.log(`Connected to ${guild.name}`); }
-  catch (e) { console.error("PONG role setup failed:", e.message); }
+  try {
+    const role = await getPongRole(guild);
+    console.log(`PONG role ready: ${role.id}`);
+    console.log("Bot role ID:", guild.members.me?.roles.botRole?.id || "not found");
+  } catch (e) {
+    console.error("PONG role setup failed:", e.message);
+  }
 });
 
 client.on("messageCreate", async message => {
   if (message.author.bot || !message.guild || !message.mentions.has(client.user)) return;
-  const mention = new RegExp(`<@!?\${client.user.id}>`, "g");
+  const mention = new RegExp(`<@!?\\${client.user.id}>`, "g");
   const prompt = message.content.replace(mention, "").trim();
 
   if (!prompt) return message.reply("Yo! Mention me and ask me something.");
@@ -40,12 +48,12 @@ client.on("messageCreate", async message => {
   if (/^(give|create) pong\b/i.test(prompt)) {
     if (message.author.id !== AUTHORIZED_USER_ID) return message.reply("You don't have permission to use that.");
     try {
-      const role = await ensurePongRole(message.guild);
+      const role = await getPongRole(message.guild);
       await message.member.roles.add(role);
       return message.reply(`PONG role is ready and was given to you: <@&${role.id}>`);
     } catch (e) {
       console.error(e);
-      return message.reply("I couldn't create/give PONG. Check Manage Roles and role position.");
+      return message.reply("I couldn't give PONG. Make sure my bot role is above PONG and I have Manage Roles.");
     }
   }
 
@@ -62,4 +70,5 @@ client.on("messageCreate", async message => {
     await message.reply("Gemini is having trouble right now. Try again later.");
   }
 });
+
 client.login(DISCORD_TOKEN);
