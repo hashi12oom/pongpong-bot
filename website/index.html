@@ -64,7 +64,7 @@ function normalMove(ai){const human=ai==='X'?'O':'X';const f=freeTttBoard(cells)
 function hardMove(ai){return perfectMove(ai)}
 function aiMoveTtt(){if(tttOver||tttMode==='friend'||tttTurn===tttSide)return;const ai=tttSide==='X'?'O':'X';let i;if(tttMode==='easy')i=easyMove();else if(tttMode==='normal')i=normalMove(ai);else i=hardMove(ai);if(i===undefined)return;cells[i]=ai;tttTurn=tttSide;drawTtt();if(!finishTtt())$('tttm').textContent='Your turn.'}
 function moveTtt(i){if(tttOver||cells[i])return;if(tttMode==='friend'){cells[i]=tttTurn;tttTurn=tttTurn==='X'?'O':'X';drawTtt();if(!finishTtt())$('tttm').textContent='Player '+tttTurn+' turn.';return}if(tttTurn!==tttSide)return;cells[i]=tttSide;tttTurn=tttSide==='X'?'O':'X';drawTtt();if(finishTtt())return;$('tttm').textContent='PongPong is thinking...';tttAiTimer=setTimeout(aiMoveTtt,250)}
-$('tttr').onclick=startTtt;$('tttmode').onchange=startTtt;$('tttside').onchange=startTtt);
+$('tttr').onclick=startTtt;$('tttmode').onchange=startTtt;$('tttside').onchange=startTtt;
 
 const footballers=[
 "Lionel Messi","Cristiano Ronaldo","Neymar","Kylian Mbappe","Lamine Yamal","Erling Haaland","Jude Bellingham","Vinicius Junior",
