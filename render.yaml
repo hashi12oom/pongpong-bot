@@ -16,3 +16,10 @@ services:
         value: "791281791087935519"
       - key: PONG_ROLE_NAME
         value: "PONG"
+
+  - type: web
+    name: pongpong-website
+    runtime: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm run start:website
