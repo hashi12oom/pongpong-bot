@@ -40,7 +40,7 @@ client.once("ready", async () => {
 
 client.on("messageCreate", async message => {
   if (message.author.bot || !message.guild || !message.mentions.has(client.user)) return;
-  const mention = new RegExp(`<@!?\\${client.user.id}>`, "g");
+  const mention = new RegExp(`<@!?${client.user.id}>`, "g");
   const prompt = message.content.replace(mention, "").trim();
 
   if (!prompt) return message.reply("Yo! Mention me and ask me something.");
