@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, PermissionsBitField } from "discord.js";
+import { Client, GatewayIntentBits, PermissionsBitField, REST, Routes, SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { GoogleGenAI } from "@google/genai";
 
 const { DISCORD_TOKEN, GEMINI_API_KEY, DISCORD_SERVER_ID,
@@ -69,6 +69,49 @@ client.on("messageCreate", async message => {
     console.error("Gemini error:", e);
     await message.reply("Gemini is having trouble right now. Try again later.");
   }
+});
+
+
+const slashCommands = [
+  new SlashCommandBuilder()
+    .setName("avatar")
+    .setDescription("Get a user's Discord profile picture")
+    .addUserOption(option =>
+      option.setName("user").setDescription("The user whose avatar you want").setRequired(false)
+    )
+].map(command => command.toJSON());
+
+async function registerSlashCommands() {
+  const rest = new REST({ version: "10" }).setToken(DISCORD_TOKEN);
+  try {
+    await rest.put(Routes.applicationCommands(client.user.id), { body: slashCommands });
+    console.log("Registered /avatar");
+  } catch (e) {
+    console.error("Slash command registration failed:", e.message);
+  }
+}
+
+client.on("interactionCreate", async interaction => {
+  if (!interaction.isChatInputCommand() || interaction.commandName !== "avatar") return;
+
+  const user = interaction.options.getUser("user") || interaction.user;
+  const png = user.displayAvatarURL({ extension: "png", size: 1024 });
+  const gif = user.displayAvatarURL({ extension: "gif", size: 1024 });
+
+  const embed = new EmbedBuilder()
+    .setTitle(\`\${user.globalName || user.username}'s Avatar\`)
+    .setImage(gif)
+    .setColor(0x5865F2)
+    .setFooter({ text: \`Requested by \${interaction.user.username}\` });
+
+  await interaction.reply({
+    embeds: [embed],
+    content: \`[Open avatar](\${png})\`
+  });
+});
+
+client.once("ready", async () => {
+  await registerSlashCommands();
 });
 
 client.login(DISCORD_TOKEN);
