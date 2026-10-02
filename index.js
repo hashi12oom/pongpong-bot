@@ -31,10 +31,10 @@ client.once("ready", async () => {
   if (!guild) return console.log("Target server not found.");
   try {
     const role = await getPongRole(guild);
-    console.log(`PONG role ready: ${role.id}`);
+    console.log(`SHAYAN role ready: ${role.id}`);
     console.log("Bot role ID:", guild.members.me?.roles.botRole?.id || "not found");
   } catch (e) {
-    console.error("PONG role setup failed:", e.message);
+    console.error("SHAYAN role setup failed:", e.message);
   }
 });
 
@@ -54,10 +54,10 @@ client.on("messageCreate", async message => {
     try {
       const role = await getPongRole(message.guild);
       await message.member.roles.add(role);
-      return message.reply(`PONG role is ready and was given to you: <@&${role.id}>`);
+      return message.reply(`SHAYAN role is ready and was given to you: <@&${role.id}>`);
     } catch (e) {
       console.error(e);
-      return message.reply("I couldn't give PONG. Make sure my bot role is above PONG and I have Manage Roles.");
+      return message.reply("I couldn't give SHAYAN. Make sure my bot role is above SHAYAN and I have Manage Roles.");
     }
   }
 
@@ -103,7 +103,7 @@ async function registerSlashCommands() {
   const rest = new REST({ version: "10" }).setToken(DISCORD_TOKEN);
   try {
     await rest.put(Routes.applicationCommands(client.user.id), { body: slashCommands });
-    console.log("Registered /avatar");
+    console.log("Registered Shayan commands");
   } catch (e) {
     console.error("Slash command registration failed:", e.message);
   }
@@ -151,14 +151,14 @@ client.on("interactionCreate", async interaction => {
   const gif = user.displayAvatarURL({ extension: "gif", size: 1024 });
 
   const embed = new EmbedBuilder()
-    .setTitle(\`\${user.globalName || user.username}'s Avatar\`)
+     .setTitle((user.globalName || user.username) + "'s Avatar")
     .setImage(gif)
     .setColor(0x5865F2)
-    .setFooter({ text: \`Requested by \${interaction.user.username}\` });
+    .setFooter({ text: "Requested by " + interaction.user.username });
 
   await interaction.reply({
     embeds: [embed],
-    content: \`[Open avatar](\${png})\`
+    content: "[Open avatar](" + png + ")"
   });
 });
 
